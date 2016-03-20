@@ -9,17 +9,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/roozbeh/scripts.milight.git"
+    "url": "git+ssh://git@github.com:roozbehf/milight.service.git"
   },
   "keywords": [
     "milight"
   ],
   "author": "Roozbeh Farahbod",
-  "license": "FreeBSD",
+  "license": "BSD 2-Clause",
   "bugs": {
-    "url": "https://gitlab.com/roozbeh/scripts.milight/issues"
+    "url": "https://github.com/roozbehf/milight.service/issues"
   },
-  "homepage": "https://gitlab.com/roozbeh/scripts.milight#README",
+  "homepage": "https://github.com/roozbehf/milight.service",
   "dependencies": {
     "events": "^1.1.0",
     "express": "^4.13.4",
