@@ -38,6 +38,12 @@ where
   - *rgb* followed by a dash ('-') and a value of the form *rrggbb* to set the zone's RGB values
     - example: `/2/rgb/ffff00` sets the color of zone 2 to orange
 
+### Example
+If the service is running on *localhost* port *8030*, you can set the light(s) in zone 2 to white with 50% brightness:
+```
+curl http://localhost:8030/2/white-50
+```
+
 ## Configuration
 The configuration file `config.json` is optional and currently the following options are supported:
 - `milight_host` *String* The hostname of the milight module. Default: 'milight'
