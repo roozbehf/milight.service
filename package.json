@@ -1,0 +1,36 @@
+{
+  "name": "milight.service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "milight_server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node milight_server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/roozbeh/scripts.milight.git"
+  },
+  "keywords": [
+    "milight"
+  ],
+  "author": "Roozbeh Farahbod",
+  "license": "FreeBSD",
+  "bugs": {
+    "url": "https://gitlab.com/roozbeh/scripts.milight/issues"
+  },
+  "homepage": "https://gitlab.com/roozbeh/scripts.milight#README",
+  "dependencies": {
+    "events": "^1.1.0",
+    "express": "^4.13.4",
+    "extend": "^3.0.0",
+    "jsonfile": "^2.2.3",
+    "milight": "^1.0.0",
+    "onoff": "^1.0.4"
+  },
+  "jshintConfig": {
+    "esversion": 6,
+    "strict": false,
+    "node": true
+  }
+}
