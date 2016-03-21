@@ -2,7 +2,7 @@
   "milight_host" : "milight",
   "http_port" : 8030,
   "zone_names" : {
-    "1": "Living Room",
+    "1": "The Big One",
     "2": "TV Light",
     "3": "Washroom",
     "4": "Bedroom"

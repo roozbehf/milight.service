@@ -24,7 +24,9 @@ or through npm:
 ## Configuration
 The configuration file `config.json` is optional and currently the following options are supported:
 - `milight_host` *String* The hostname of the milight module. Default: 'milight'
-- `http_port` *Number* The HTTP port to which the server will bind.
+- `http_port` *Number* The HTTP port to which the server will bind. Default: 8030
+- `http_host` *String* The hostname (or IP address) to which the service will bind. Default: 'localhost'
+- `base_url` *String* The URL under which the service is available to the client (public). If not provided, it will be assumed to be `http://<http_host>:<http_port>`.
 - `zone_names` *JSON* An optionally partial array of zone id numbers to a *String*. For example
   ```
   "zone_names": {"1": "Dining Room", "4": "Corridor"}

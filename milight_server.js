@@ -22,8 +22,10 @@ const zones = ['1', '2', '3', '4', 'all'];
 const commands = ['on', 'off', 'bright', 'white', 'rgb'];
 const configFileName = '/config.json';
 var config = {
-  milight_host: "milight",
-  http_port: 8030
+  milight_host: 'milight',
+  http_port: 8030,
+  http_host: 'localhost',
+  base_url: 'http://localhost:8030'
 };
 
 // --- log serializer
@@ -55,6 +57,11 @@ jsonfile.readFile(file, function(err, obj) {
     log.warn({error: err}, 'Could not read config file. Using default values.');
   } else {
     config = extend(true, {}, config, obj);
+    if (obj.base_url == undefined) {
+      config.base_url = 'http://'
+          + config.http_host
+          + (config.http_port == '80' ? '' : (':' + config.http_port));
+    }
     log.info('Configuration file loaded.');
     log.info(config);
     events.emit('configLoaded');
@@ -73,7 +80,7 @@ function setupServer() {
 
   app.get('/zones', listZones);
 
-  app.listen(config.http_port, function () {
+  app.listen(config.http_port, config.http_host, function () {
     console.log('Milight controller app listening on port %s!', config.http_port);
   });
 }
@@ -84,7 +91,7 @@ function msgInvalidZone(zone) {
 }
 
 function getZoneRef(req, zone) {
-  return 'http://' + req.headers.host + '/' + zone;
+  return config.base_url + '/zones/' + zone;
 }
 
 // --- Zones List
