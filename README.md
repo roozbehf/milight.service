@@ -37,7 +37,7 @@ curl -X PUT http://localhost:8030/2/white-50
 ```
 
 ## API
-The API is very simple and tries to be as close to REST (and adheres to [{json:api](http://jsonapi.org/) specs) as it is practically reasonable.
+The API is very simple and tries to be as close to REST (and adheres to [{json:api}](http://jsonapi.org/) specs) as it is practically reasonable.
 
 ### List of Zones
 ```
@@ -65,14 +65,16 @@ Returns information about the given zone, mainly its name and available operatio
 http://localhost:8030/1
 ---
 {
-  "id": "1",
-  "name": "Living Room",
-  "links": {
-    "on": "http://localhost:8030/1/on",
-    "off": "http://localhost:8030/1/off",
-    "bright": "http://localhost:8030/1/bright",
-    "white": "http://localhost:8030/1/white",
-    "rgb": "http://localhost:8030/1/rgb"
+  "data": {
+    "id": "1",
+    "name": "Living Room",
+    "links": {
+      "on": "http://localhost:8030/1/on",
+      "off": "http://localhost:8030/1/off",
+      "bright": "http://localhost:8030/1/bright",
+      "white": "http://localhost:8030/1/white",
+      "rgb": "http://localhost:8030/1/rgb"
+    }
   }
 }
 ```

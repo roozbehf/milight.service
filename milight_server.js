@@ -85,7 +85,7 @@ function identifyZone(req, res) {
       links[commands[i]] = 'http://' + req.headers.host + '/' + zone + '/' + commands[i];
     }
     data['links'] = links;
-    res.json(data);
+    res.json({data: data});
   } else {
     res.status(400).json({error: [msgInvalidZone(zone)]})
   }
