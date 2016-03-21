@@ -67,7 +67,7 @@ function setupServer() {
       broadcast: true
   });
 
-  app.get('/zones/:zone/:cmd', milightService);
+  app.post('/zones/:zone/:cmd/:param?', milightService);
 
   app.get('/zones/:zone', identifyZone);
 
@@ -121,22 +121,16 @@ function identifyZone(req, res) {
 
 function milightService(req, res) {
   var zone = req.params.zone;
-  var cmd_full = req.params.cmd
-  var param;
-  param = undefined;
+  var cmd = req.params.cmd
+  var param = req.params.param;
 
-  var pieces = cmd_full.split('-');
-  var cmd = pieces[0];
-  if (pieces.length > 1) {
-    param = pieces[1];
-  }
   var msg = updateZone(zone, cmd, param);
 
   if (msg !== undefined) {
     res.status(400).json({errors: [msg]});
     log.error({req: req, error: msg}, 'Invalid command request.');
   } else {
-    res.sendStatus(200);
+    res.sendStatus(202);
     log.info({req: req}, 'Applied a light command.');
   }
 }

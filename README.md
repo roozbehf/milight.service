@@ -33,7 +33,7 @@ The configuration file `config.json` is optional and currently the following opt
 ## Example
 If the service is running on *localhost* port *8030*, you can set the light(s) in zone 2 to white with 50% brightness using `curl`:
 ```
-curl -X PUT http://localhost:8030/2/white-50
+curl -X POST http://localhost:8030/2/white/50
 ```
 
 ## API
@@ -93,18 +93,17 @@ http://localhost:8030/1
 
 ### Update Zone
 ```
-GET /zones/:zone/:cmd HTTP/1.1
+POST /zones/:zone/:cmd/:param? HTTP/1.1
 ```
 Changes the zone's light settings based on the given command. Here is one corner where
-for practical reasons I deviate from REST. If commands require a parameter,
-for example the `white` command, it requires the parameter to be provided after the
-command's name and separated with a dash.
+for practical reasons I deviate from REST a bit. The optional parameter is for commands
+that require a parameter, for example the `white` command.
 
 **Example**
 ```
-http://localhost:8030/1/bright-50
+http://localhost:8030/1/bright/50
 ---
-HTTP/1.1 200 OK
+HTTP/1.1 202 Accepted
 ```
 
 ### Errors
@@ -113,14 +112,13 @@ error messages.
 
 **Example**
 ```
-http://localhost:8030/5/bright-50
+http://localhost:8030/5/bright/50
 ---
 HTTP/1.1 400 Bad Request
 {
   "errors": ["Zone '5' does not exist."]
 }
 ```
-
 
 ## Acknowledgement
 Thanks to [Olivier Oeuillot](https://github.com/oeuillot) for the [node-milight](https://github.com/oeuillot/node-milight) module.
