@@ -15,7 +15,7 @@
     "milight"
   ],
   "author": "Roozbeh Farahbod",
-  "license": "BSD 2-Clause",
+  "license": "FreeBSD",
   "bugs": {
     "url": "https://github.com/roozbehf/milight.service/issues"
   },
