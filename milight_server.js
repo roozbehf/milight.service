@@ -3,6 +3,14 @@
 */
 'use strict';
 
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+  name: 'milight.service',
+  // level: DEBUG,
+  // serializers: {req: bunyan.stdSerializers.req}
+  serializers: {req: reqSerializer}
+});
+
 var express = require('express');
 var app = express();
 var jsonfile = require('jsonfile');
@@ -17,6 +25,15 @@ var config = {
   milight_host: "milight",
   http_port: 8030
 };
+
+// --- log serializer
+function reqSerializer(req) {
+    return {
+        method: req.method,
+        url: req.url,
+        headers: req.headers
+    };
+}
 
 // --- setup the events system
 const EventEmitter = require('events');
@@ -35,12 +52,11 @@ events.on('configLoaded', setupServer);
 var file = __dirname + configFileName;
 jsonfile.readFile(file, function(err, obj) {
   if (err) {
-    console.error('Could not read config file. Using default values.');
-    console.dir(err);
+    log.warn({error: err}, 'Could not read config file. Using default values.');
   } else {
     config = extend(true, {}, config, obj);
-    console.log('Configuration file loaded.');
-    console.dir(config);
+    log.info('Configuration file loaded.');
+    log.info(config);
     events.emit('configLoaded');
   }
 });
@@ -79,6 +95,7 @@ function listZones(req, res) {
     data.push({id: zone, links: {self: getZoneRef(req, zone)}})
   }
   res.json({data: data});
+  log.info({req: req}, 'Responded to a zones list query.');
 }
 
 // --- Zone Identifier
@@ -94,8 +111,11 @@ function identifyZone(req, res) {
       links[commands[i]] = getZoneRef(req, zone) + '/' + commands[i];
     }
     res.json({data: data, links: links});
+    log.info({req: req, data: data}, 'Responded to a zone id query.');
   } else {
-    res.status(400).json({error: [msgInvalidZone(zone)]})
+    var errorMsg = msgInvalidZone(zone);
+    res.status(400).json({error: [errorMsg]});
+    log.error({req: req, error: errorMsg}, 'Invalid zone id query.');
   }
 }
 
@@ -114,8 +134,10 @@ function milightService(req, res) {
 
   if (msg !== undefined) {
     res.status(400).json({errors: [msg]});
+    log.error({req: req, error: msg}, 'Invalid command request.');
   } else {
     res.sendStatus(200);
+    log.info({req: req}, 'Applied a light command.');
   }
 }
 
