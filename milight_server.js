@@ -66,9 +66,18 @@ function msgInvalidZone(zone) {
   return 'Zone \'' + zone + '\' does not exist.';
 }
 
+function getZoneRef(req, zone) {
+  return 'http://' + req.headers.host + '/' + zone;
+}
+
 // --- Zones List
 function listZones(req, res) {
-  res.json({data: zones});
+  var data = [];
+  for (var i in zones) {
+    var zone = zones[i];
+    data.push({id: zone, links: {self: getZoneRef(req, zone)}})
+  }
+  res.json({data: data});
 }
 
 // --- Zone Identifier
@@ -82,7 +91,7 @@ function identifyZone(req, res) {
     }
     var links = {};
     for (var i in commands) {
-      links[commands[i]] = 'http://' + req.headers.host + '/' + zone + '/' + commands[i];
+      links[commands[i]] = getZoneRef(req, zone) + '/' + commands[i];
     }
     data['links'] = links;
     res.json({data: data});

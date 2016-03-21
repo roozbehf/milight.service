@@ -50,8 +50,19 @@ Returns the list of zone ids.
 http://localhost:8030/
 ---
 {
-  "data": ["1", "2", "3", "4", "all"]
-}
+  "data": [
+    {
+      "id": "1",
+      "links": {
+        "self": "http://localhost:8030/1"
+      }
+    }, {
+      "id": "2",
+      "links": {
+        "self": "http://localhost:8030/2"
+      }
+    },
+    ...
 ```
 
 ### Zone Information
