@@ -41,13 +41,13 @@ The API is very simple and tries to be as close to REST (and adheres to [{json:a
 
 ### List of Zones
 ```
-GET / HTTP/1.1
+GET /zones HTTP/1.1
 ```
 Returns the list of zone ids.
 
 **Example**
 ```
-http://localhost:8030/
+http://localhost:8030/zones
 ---
 {
   "data": [
@@ -67,7 +67,7 @@ http://localhost:8030/
 
 ### Zone Information
 ```
-GET /:zone HTTP/1.1
+GET /zones/:zone HTTP/1.1
 ```
 Returns information about the given zone, mainly its name and available operations on it.
 
@@ -93,9 +93,9 @@ http://localhost:8030/1
 
 ### Update Zone
 ```
-GET /:zone/:cmd HTTP/1.1
+GET /zones/:zone/:cmd HTTP/1.1
 ```
-Updates the zone's status based on the given command. Here is one corner where
+Changes the zone's light settings based on the given command. Here is one corner where
 for practical reasons I deviate from REST. If commands require a parameter,
 for example the `white` command, it requires the parameter to be provided after the
 command's name and separated with a dash.

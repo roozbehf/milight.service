@@ -51,11 +51,11 @@ function setupServer() {
       broadcast: true
   });
 
-  app.put('/:zone/:cmd', milightService);
+  app.get('/zones/:zone/:cmd', milightService);
 
-  app.get('/:zone', identifyZone);
+  app.get('/zones/:zone', identifyZone);
 
-  app.get('/', listZones);
+  app.get('/zones', listZones);
 
   app.listen(config.http_port, function () {
     console.log('Milight controller app listening on port %s!', config.http_port);
