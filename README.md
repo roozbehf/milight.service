@@ -78,14 +78,15 @@ http://localhost:8030/1
 {
   "data": {
     "id": "1",
-    "name": "Living Room",
-    "links": {
-      "on": "http://localhost:8030/1/on",
-      "off": "http://localhost:8030/1/off",
-      "bright": "http://localhost:8030/1/bright",
-      "white": "http://localhost:8030/1/white",
-      "rgb": "http://localhost:8030/1/rgb"
-    }
+    "name": "Living Room"
+  },
+  "links": {
+    "self": "http://localhost:8030/1",
+    "on": "http://localhost:8030/1/on",
+    "off": "http://localhost:8030/1/off",
+    "bright": "http://localhost:8030/1/bright",
+    "white": "http://localhost:8030/1/white",
+    "rgb": "http://localhost:8030/1/rgb"
   }
 }
 ```

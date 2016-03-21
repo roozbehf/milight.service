@@ -11,6 +11,7 @@ var Milight = require("milight");
 var milight;
 
 const zones = ['1', '2', '3', '4', 'all'];
+const commands = ['on', 'off', 'bright', 'white', 'rgb'];
 const configFileName = '/config.json';
 var config = {
   milight_host: "milight",
@@ -81,7 +82,6 @@ function listZones(req, res) {
 }
 
 // --- Zone Identifier
-var commands = ['on', 'off', 'bright', 'white', 'rgb'];
 function identifyZone(req, res) {
   var zone = req.params.zone;
   if (zones.indexOf(zone) >= 0) {
@@ -89,12 +89,11 @@ function identifyZone(req, res) {
     if (config.zone_names && config.zone_names[zone]) {
       data.name = config.zone_names[zone];
     }
-    var links = {};
+    var links = {self: getZoneRef(req, zone)};
     for (var i in commands) {
       links[commands[i]] = getZoneRef(req, zone) + '/' + commands[i];
     }
-    data['links'] = links;
-    res.json({data: data});
+    res.json({data: data, links: links});
   } else {
     res.status(400).json({error: [msgInvalidZone(zone)]})
   }
