@@ -10,6 +10,7 @@ var extend = require('extend');
 var Milight = require("milight");
 var milight;
 
+const zones = ['1', '2', '3', '4', 'all'];
 const configFileName = '/config.json';
 var config = {
   milight_host: "milight",
@@ -49,15 +50,48 @@ function setupServer() {
       broadcast: true
   });
 
-  app.get('/:zone/:cmd', milightService);
+  app.put('/:zone/:cmd', milightService);
+
+  app.get('/:zone', identifyZone);
+
+  app.get('/', listZones);
 
   app.listen(config.http_port, function () {
     console.log('Milight controller app listening on port %s!', config.http_port);
   });
 }
 
+// --- Create an invalid zone error message
+function msgInvalidZone(zone) {
+  return 'Zone \'' + zone + '\' does not exist.';
+}
+
+// --- Zones List
+function listZones(req, res) {
+  res.json({data: zones});
+}
+
+// --- Zone Identifier
+var commands = ['on', 'off', 'bright', 'white', 'rgb'];
+function identifyZone(req, res) {
+  var zone = req.params.zone;
+  if (zones.indexOf(zone) >= 0) {
+    var data = {id: zone, name: ('zone ' + zone)};
+    if (config.zone_names && config.zone_names[zone]) {
+      data.name = config.zone_names[zone];
+    }
+    var links = {};
+    for (var i in commands) {
+      links[commands[i]] = 'http://' + req.headers.host + '/' + zone + '/' + commands[i];
+    }
+    data['links'] = links;
+    res.json(data);
+  } else {
+    res.status(400).json({error: [msgInvalidZone(zone)]})
+  }
+}
+
 function milightService(req, res) {
-  var msg = {msg: 'All good!', status: 'OK'};
   var zone = req.params.zone;
   var cmd_full = req.params.cmd
   var param;
@@ -68,17 +102,21 @@ function milightService(req, res) {
   if (pieces.length > 1) {
     param = pieces[1];
   }
-  msg = updateZone(zone, cmd, param);
+  var msg = updateZone(zone, cmd, param);
 
-  if (msg.status == "ERROR") {
-    res.status(400).send(msg);
+  if (msg !== undefined) {
+    res.status(400).json({errors: [msg]});
   } else {
-    res.send(msg);
+    res.sendStatus(200);
   }
 }
 
 function updateZone(zone, cmd, param) {
   var mzone;
+
+  if (zones.indexOf(zone) < 0) {
+    return msgInvalidZone(zone);
+  }
 
   // set zone
   if (zone == 'all') {
@@ -141,12 +179,8 @@ function updateZone(zone, cmd, param) {
       break;
 
     default:
-      return {status: "ERROR", msg: "Command '" + cmd + "' not found."};
+      return 'Command \'' + cmd + '\' not found.';
   }
 
-  if (merror) {
-    return {status: "ERROR", msg: merror};
-  } else {
-    return {status: "OK", msg: "Done."};
-  }
+  return merror;
 }
