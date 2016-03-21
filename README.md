@@ -37,7 +37,7 @@ curl -X PUT http://localhost:8030/2/white-50
 ```
 
 ## API
-The API is very simple and tries to be as close to REST as it is practically reasonable.
+The API is very simple and tries to be as close to REST (and adheres to [{json:api](http://jsonapi.org/) specs) as it is practically reasonable.
 
 ### List of Zones
 ```
