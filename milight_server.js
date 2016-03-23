@@ -149,7 +149,7 @@ function updateZone(zone, cmd, param, callback) {
   var mzone;
 
   if (zones.indexOf(zone) < 0) {
-    return msgInvalidZone(zone);
+    callback(msgInvalidZone(zone));
   }
 
   // set zone
@@ -157,23 +157,6 @@ function updateZone(zone, cmd, param, callback) {
     mzone = milight.allZones();
   } else {
     mzone = milight.zone(parseInt(zone));
-  }
-
-  function checkParam(str) {
-    return (str !== undefined) && (str.length > 0);
-  }
-
-  function intParam(str) {
-    if (checkParam(str)) {
-      var result = parseInt(str);
-      if (isNaN(result)) {
-        return undefined;
-      } else {
-        return result;
-      }
-    } else {
-      return undefined;
-    }
   }
 
   switch (cmd) {
@@ -189,7 +172,7 @@ function updateZone(zone, cmd, param, callback) {
       if (param === undefined) {
         param = '100';
       }
-      var mparam = intParam(param);
+      var mparam = intValue(param);
       if (mparam !== undefined) {
         mzone.white(mparam, callback);
       } else {
@@ -201,7 +184,7 @@ function updateZone(zone, cmd, param, callback) {
       if (param === undefined) {
         param = '100';
       }
-      var mparam = intParam(param);
+      var mparam = intValue(param);
       if (mparam !== undefined) {
         mzone.brightness(mparam, callback);
       } else {
@@ -210,7 +193,7 @@ function updateZone(zone, cmd, param, callback) {
       break;
 
     case 'rgb':
-      if (checkParam(param)) {
+      if (notEmptyValue(param)) {
         mparam = '#' + param;
         mzone.rgb(mparam, callback);
       } else {
@@ -222,4 +205,21 @@ function updateZone(zone, cmd, param, callback) {
       callback('Command \'' + cmd + '\' not found.');
   }
 
+}
+
+function notEmptyValue(str) {
+  return (str !== undefined) && (str.length > 0);
+}
+
+function intValue(str) {
+  if (notEmptyValue(str)) {
+    var result = parseInt(str);
+    if (isNaN(result)) {
+      return undefined;
+    } else {
+      return result;
+    }
+  } else {
+    return undefined;
+  }
 }
