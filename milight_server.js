@@ -81,7 +81,7 @@ function setupServer() {
   app.get('/zones', listZones);
 
   app.listen(config.http_port, config.http_host, function () {
-    console.log('Milight controller app listening on port %s!', config.http_port);
+    console.log('Milight service is listening on port %s.', config.http_port);
   });
 }
 
@@ -131,18 +131,21 @@ function milightService(req, res) {
   var cmd = req.params.cmd
   var param = req.params.param;
 
-  var msg = updateZone(zone, cmd, param);
-
-  if (msg !== undefined) {
-    res.status(400).json({errors: [msg]});
-    log.error({req: req, error: msg}, 'Invalid command request.');
-  } else {
-    res.sendStatus(202);
-    log.info({req: req}, 'Applied a light command.');
+  function milightServiceCallBack(error) {
+    if (error) {
+      error = error.toString();
+      res.status(400).json({errors: [error]});
+      log.error({req: req, error: error}, 'Invalid command request.');
+    } else {
+      res.sendStatus(202);
+      log.info({req: req}, 'Applied a light command.');
+    }
   }
+
+  var msg = updateZone(zone, cmd, param, milightServiceCallBack);
 }
 
-function updateZone(zone, cmd, param) {
+function updateZone(zone, cmd, param, callback) {
   var mzone;
 
   if (zones.indexOf(zone) < 0) {
@@ -156,13 +159,6 @@ function updateZone(zone, cmd, param) {
     mzone = milight.zone(parseInt(zone));
   }
 
-  var merror;
-  merror = undefined;
-
-  function onError(error) {
-    merror = error;
-  }
-
   function checkParam(str) {
     return (str !== undefined) && (str.length > 0);
   }
@@ -171,47 +167,59 @@ function updateZone(zone, cmd, param) {
     if (checkParam(str)) {
       var result = parseInt(str);
       if (isNaN(result)) {
-        merror = "'" + str + "' is not a numeric value.";
         return undefined;
       } else {
         return result;
       }
+    } else {
+      return undefined;
     }
   }
 
   switch (cmd) {
     case 'on':
-      mzone.on(onError);
+      mzone.on(callback);
       break;
 
     case 'off':
-      mzone.off();
+      mzone.off(callback);
       break;
 
     case 'white':
+      if (param === undefined) {
+        param = '100';
+      }
       var mparam = intParam(param);
       if (mparam !== undefined) {
-        mzone.white(mparam);
+        mzone.white(mparam, callback);
+      } else {
+        callback("'" + param + "' is not a numeric value.");
       }
       break;
 
     case 'bright':
-      mparam = intParam(param);
+      if (param === undefined) {
+        param = '100';
+      }
+      var mparam = intParam(param);
       if (mparam !== undefined) {
-        mzone.brightness(mparam);
+        mzone.brightness(mparam, callback);
+      } else {
+        callback("'" + param + "' is not a numeric value.");
       }
       break;
 
     case 'rgb':
       if (checkParam(param)) {
         mparam = '#' + param;
-        mzone.rgb(mparam);
+        mzone.rgb(mparam, callback);
+      } else {
+        callback("'" + param + "' is not an RGB value.");
       }
       break;
 
     default:
-      return 'Command \'' + cmd + '\' not found.';
+      callback('Command \'' + cmd + '\' not found.');
   }
 
-  return merror;
 }
