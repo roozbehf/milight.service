@@ -63,9 +63,9 @@ jsonfile.readFile(file, function(err, obj) {
           + (config.http_port == '80' ? '' : (':' + config.http_port));
     }
     log.info('Configuration file loaded.');
-    log.info(config);
-    events.emit('configLoaded');
   }
+  log.info({config: config});
+  events.emit('configLoaded');
 });
 
 function setupServer() {
