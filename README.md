@@ -35,7 +35,7 @@ The configuration file `config.json` is optional and currently the following opt
 ## Example
 If the service is running on *localhost* port *8030*, you can set the light(s) in zone 2 to white with 50% brightness using `curl`:
 ```
-curl -X POST http://localhost:8030/2/white/50
+curl -X POST http://localhost:8030/zones/2/white/50
 ```
 
 ## API
@@ -56,12 +56,12 @@ http://localhost:8030/zones
     {
       "id": "1",
       "links": {
-        "self": "http://localhost:8030/1"
+        "self": "http://localhost:8030/zones/1"
       }
     }, {
       "id": "2",
       "links": {
-        "self": "http://localhost:8030/2"
+        "self": "http://localhost:8030/zones/2"
       }
     },
     ...
@@ -75,7 +75,7 @@ Returns information about the given zone, mainly its name and available operatio
 
 **Example**
 ```
-http://localhost:8030/1
+http://localhost:8030/zones/1
 ---
 {
   "data": {
@@ -83,12 +83,12 @@ http://localhost:8030/1
     "name": "Living Room"
   },
   "links": {
-    "self": "http://localhost:8030/1",
-    "on": "http://localhost:8030/1/on",
-    "off": "http://localhost:8030/1/off",
-    "bright": "http://localhost:8030/1/bright",
-    "white": "http://localhost:8030/1/white",
-    "rgb": "http://localhost:8030/1/rgb"
+    "self": "http://localhost:8030/zones/1",
+    "on": "http://localhost:8030/zones/1/on",
+    "off": "http://localhost:8030/zones/1/off",
+    "bright": "http://localhost:8030/zones/1/bright",
+    "white": "http://localhost:8030/zones/1/white",
+    "rgb": "http://localhost:8030/zones/1/rgb"
   }
 }
 ```
@@ -103,7 +103,7 @@ that require a parameter, for example the `white` command.
 
 **Example**
 ```
-http://localhost:8030/1/bright/50
+http://localhost:8030/zones/1/bright/50
 ---
 HTTP/1.1 202 Accepted
 ```
@@ -114,7 +114,7 @@ error messages.
 
 **Example**
 ```
-http://localhost:8030/5/bright/50
+http://localhost:8030/zones/5/bright/50
 ---
 HTTP/1.1 400 Bad Request
 {
