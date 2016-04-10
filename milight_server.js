@@ -21,6 +21,10 @@ var milight;
 const zones = ['1', '2', '3', '4', 'all'];
 const commands = ['on', 'off', 'bright', 'white', 'rgb'];
 const configFileName = '/config.json';
+const STATE_ON = 'ON';
+const STATE_OFF = 'OFF';
+var zoneStates = [];
+
 var config = {
   milight_host: 'milight',
   http_port: 8030,
@@ -68,11 +72,26 @@ jsonfile.readFile(file, function(err, obj) {
   events.emit('configLoaded');
 });
 
+// -- initiates zone status
+function initiateZoneStates() {
+  for (var i in zones) {
+    var zone = zones[i];
+    zoneStates[zone] = {
+      state: STATE_OFF,
+      rgb: undefined,
+      white: 100,
+      brightness: 100
+    }
+  }
+}
+
 function setupServer() {
   milight = new Milight({
       host: config.milight_host,
       broadcast: true
   });
+
+  initiateZoneStates();
 
   app.post('/zones/:zone/:cmd/:param?', milightService);
 
@@ -109,7 +128,7 @@ function listZones(req, res) {
 function identifyZone(req, res) {
   var zone = req.params.zone;
   if (zones.indexOf(zone) >= 0) {
-    var data = {id: zone, name: ('zone ' + zone)};
+    var data = {id: zone, name: ('zone ' + zone), lastStatus: zoneStates[zone]};
     if (config.zone_names && config.zone_names[zone]) {
       data.name = config.zone_names[zone];
     }
@@ -162,10 +181,12 @@ function updateZone(zone, cmd, param, callback) {
   switch (cmd) {
     case 'on':
       mzone.on(callback);
+      zoneStates[zone].state = STATE_ON;
       break;
 
     case 'off':
       mzone.off(callback);
+      zoneStates[zone].state = STATE_OFF;
       break;
 
     case 'white':
@@ -175,6 +196,10 @@ function updateZone(zone, cmd, param, callback) {
       var mparam = intValue(param);
       if (mparam !== undefined) {
         mzone.white(mparam, callback);
+        zoneStates[zone].state = STATE_ON;
+        zoneStates[zone].white = mparam;
+        zoneStates[zone].brightness = mparam;
+        zoneStates[zone].rgb = undefined;
       } else {
         callback("'" + param + "' is not a numeric value.");
       }
@@ -187,6 +212,11 @@ function updateZone(zone, cmd, param, callback) {
       var mparam = intValue(param);
       if (mparam !== undefined) {
         mzone.brightness(mparam, callback);
+        zoneStates[zone].state = STATE_ON;
+        zoneStates[zone].brightness = mparam;
+        if (zoneStates[zone].white !== undefined) {
+          zoneStates[zone].white = mparam;
+        }
       } else {
         callback("'" + param + "' is not a numeric value.");
       }
@@ -196,6 +226,9 @@ function updateZone(zone, cmd, param, callback) {
       if (notEmptyValue(param)) {
         mparam = '#' + param;
         mzone.rgb(mparam, callback);
+        zoneStates[zone].state = STATE_ON;
+        zoneStates[zone].rgb = mparam;
+        zoneStates[zone].white = undefined;
       } else {
         callback("'" + param + "' is not an RGB value.");
       }

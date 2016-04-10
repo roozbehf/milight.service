@@ -80,7 +80,12 @@ http://localhost:8030/zones/1
 {
   "data": {
     "id": "1",
-    "name": "Living Room"
+    "name": "Living Room",
+    "lastStatus": {
+      "brightness": 100,
+      "state": "ON",
+      "white": 100
+    },
   },
   "links": {
     "self": "http://localhost:8030/zones/1",
@@ -92,6 +97,8 @@ http://localhost:8030/zones/1
   }
 }
 ```
+
+Since Milight has no notion of state, the `lastStatus` information is based on the history of the commands sent to service. If the lights are only controlled by the service, the information is a good representation of the state of the zones.
 
 ### Update Zone
 ```
